@@ -1,1061 +1,741 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MovieFlex - Watch & Earn</title>
-    
-    <!-- Font Awesome 6 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>ভিডিও পোর্টাল</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
+    <!-- টেলিগ্রাম ওয়েব অ্যাপ SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <!-- Adsgram SDK -->
     <script src="https://sad.adsgram.ai/js/sad.min.js" async></script>
     
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+        }
+
         body {
-            font-family: 'Hind Siliguri', 'Poppins', sans-serif;
-            background: #ffffff;
-            color: #333333;
-            line-height: 1.5;
+            background: linear-gradient(145deg, #0a0f1e 0%, #0c1222 100%);
+            padding: 1rem;
+            color: #f0f3fa;
+            min-height: 100vh;
         }
 
-        /* Robot Verification Modal */
-        .robot-verification {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.95);
-            z-index: 10000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            transition: all 0.3s ease;
-        }
-        .robot-verification.hide {
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
-        }
-        .robot-box {
-            background: linear-gradient(135deg, #1a1a2e, #16213e);
-            padding: 40px;
-            border-radius: 30px;
-            text-align: center;
-            max-width: 350px;
-            width: 90%;
-            box-shadow: 0 0 50px rgba(0,0,0,0.5);
-            border: 2px solid #ff0000;
-            animation: borderPulse 2s infinite;
-        }
-        @keyframes borderPulse {
-            0% { border-color: #ff0000; box-shadow: 0 0 20px #ff0000; }
-            50% { border-color: #0000ff; box-shadow: 0 0 20px #0000ff; }
-            100% { border-color: #ff0000; box-shadow: 0 0 20px #ff0000; }
-        }
-        .robot-icon {
-            font-size: 80px;
-            color: #ff0000;
-            margin-bottom: 20px;
-        }
-        .robot-box h2 {
-            color: white;
-            margin-bottom: 10px;
-            font-size: 24px;
-        }
-        .robot-box p {
-            color: #ccc;
-            margin-bottom: 25px;
-            font-size: 14px;
-        }
-        .verify-btn {
-            background: linear-gradient(135deg, #ff0000, #0000ff);
-            color: white;
-            border: none;
-            padding: 14px 40px;
-            border-radius: 50px;
-            font-size: 18px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: transform 0.3s;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .verify-btn:hover { transform: scale(1.05); }
-        .verify-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        /* Loading Overlay for Ad */
-        .loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #ffffff;
-            z-index: 9999;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-        }
-        .loading-overlay.show {
-            display: flex;
-        }
-        .loading-spinner {
-            width: 60px;
-            height: 60px;
-            border: 5px solid #f0f0f0;
-            border-top: 5px solid #ff0000;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-bottom: 20px;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        .loading-text {
-            font-size: 18px;
-            color: #ff0000;
-            font-weight: 500;
-        }
-
-        /* Top running bar */
-        .top-bar {
-            background: #ff0000;
-            color: #ffffff;
-            padding: 12px 0;
-            overflow: hidden;
-            position: relative;
-            white-space: nowrap;
-        }
-
-        .top-bar-content {
-            display: inline-block;
-            animation: scrollLeft 20s linear infinite;
-            padding-left: 100%;
-            font-size: 16px;
-            font-weight: 500;
-        }
-
-        @keyframes scrollLeft {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-100%); }
-        }
-
-        /* Header */
-        .header {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            padding: 15px 20px;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-
-        .header-content {
-            max-width: 1400px;
+        .container {
+            max-width: 600px;
             margin: 0 auto;
+            width: 100%;
+        }
+
+        .slider-section {
+            margin-bottom: 2rem;
+            background: rgba(0, 0, 0, 0.35);
+            border-radius: 1.5rem;
+            padding: 1rem 0.75rem;
+            backdrop-filter: blur(2px);
+            box-shadow: 0 10px 25px -8px rgba(0,0,0,0.5);
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            padding-left: 0.5rem;
+            border-left: 5px solid #ff6a3d;
             display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .logo img {
-            height: 45px;
-            width: 45px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid #ff0000;
-            transition: all 0.3s ease;
-        }
-
-        .logo span {
-            font-size: 28px;
-            font-weight: 800;
-            background: linear-gradient(135deg, #ff0000, #0000ff, #ffff00);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        /* Categories */
-        .categories {
-            max-width: 1400px;
-            margin: 20px auto;
-            padding: 0 20px;
-            overflow-x: auto;
-            white-space: nowrap;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        .categories::-webkit-scrollbar { display: none; }
-
-        .category-wrapper {
-            display: inline-flex;
-            gap: 12px;
-        }
-
-        .category-btn {
-            display: inline-flex;
             align-items: center;
             gap: 8px;
-            padding: 10px 20px;
-            background: #f0f0f0;
-            border-radius: 50px;
-            font-size: 15px;
-            font-weight: 500;
-            color: #333;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: 2px solid transparent;
         }
 
-        .category-btn:hover { transform: translateY(-2px); }
-        .category-btn.active {
-            background: linear-gradient(135deg, #ff0000, #0000ff, #ffff00);
-            color: white;
+        .section-title i {
+            color: #ff6a3d;
         }
 
-        /* Trending Banner */
-        .trending-banner {
-            max-width: 1400px;
-            margin: 20px auto;
-            padding: 0 20px;
-        }
-
-        .trending-card {
+        .carousel-container {
             position: relative;
-            border-radius: 20px;
-            overflow: hidden;
-            aspect-ratio: 16/9;
-            cursor: pointer;
-            border: 4px solid transparent;
-            animation: threeColorBorder 3s infinite;
-        }
-
-        @keyframes threeColorBorder {
-            0% { border-color: #ff0000; box-shadow: 0 0 15px #ff0000; }
-            33% { border-color: #0000ff; box-shadow: 0 0 15px #0000ff; }
-            66% { border-color: #ffff00; box-shadow: 0 0 15px #ffff00; }
-            100% { border-color: #ff0000; box-shadow: 0 0 15px #ff0000; }
-        }
-
-        .trending-image {
             width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.5s ease;
-        }
-
-        .trending-card:hover .trending-image { transform: scale(1.05); }
-
-        .trending-title-container {
-            max-width: 1400px;
-            margin: 10px auto 30px;
-            padding: 0 20px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .trending-title {
-            font-size: 32px;
-            font-weight: 800;
-            color: #333;
-        }
-
-        .trending-badge {
-            background: linear-gradient(135deg, #ff0000, #0000ff, #ffff00);
-            color: white;
-            padding: 5px 15px;
-            border-radius: 50px;
-            font-size: 14px;
-        }
-
-        /* Movie Grid */
-        .movie-section {
-            max-width: 1400px;
-            margin: 30px auto;
-            padding: 0 20px;
-        }
-
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .section-header h2 {
-            font-size: 24px;
-            font-weight: 700;
-            color: #333;
-        }
-
-        .movie-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-        }
-
-        @media (min-width: 640px) {
-            .movie-grid { grid-template-columns: repeat(3, 1fr); }
-        }
-        @media (min-width: 1024px) {
-            .movie-grid { grid-template-columns: repeat(5, 1fr); }
-        }
-
-        /* Movie Card */
-        .movie-card {
-            position: relative;
-            border-radius: 15px;
             overflow: hidden;
-            background: white;
-            border: 2px solid #eee;
-            transition: transform 0.3s;
-        }
-        .movie-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-
-        .movie-thumbnail {
-            position: relative;
-            aspect-ratio: 16/9;
-            overflow: hidden;
-        }
-        .movie-thumbnail img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.5s ease;
-        }
-        .movie-card:hover .movie-thumbnail img { transform: scale(1.05); }
-
-        .movie-quality {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: rgba(0,0,0,0.7);
-            color: white;
-            padding: 4px 8px;
-            border-radius: 5px;
-            font-size: 11px;
-            z-index: 2;
+            border-radius: 1.2rem;
+            background: #00000055;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
         }
 
-        .movie-info {
-            padding: 12px;
-            background: white;
-            position: relative;
-        }
-        .movie-title {
-            font-weight: 600;
-            font-size: 15px;
-            margin-bottom: 8px;
-            color: #333;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .movie-meta {
+        .carousel-track {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            color: #666;
-            font-size: 12px;
-            margin-bottom: 12px;
+            transition: transform 0.4s ease-in-out;
         }
 
-        /* WATCH BUTTON */
-        .watch-btn {
-            width: 100%;
-            background: linear-gradient(135deg, #ff0000, #cc0000);
-            color: white;
-            border: none;
-            padding: 10px;
-            border-radius: 30px;
-            font-weight: 700;
-            font-size: 14px;
-            cursor: pointer;
+        .carousel-slide {
+            flex: 0 0 100%;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 8px;
-            transition: all 0.3s;
-            border: 1px solid rgba(255,255,255,0.3);
+            padding: 0.5rem;
         }
-        .watch-btn i { font-size: 14px; }
-        .watch-btn:hover {
-            background: linear-gradient(135deg, #cc0000, #aa0000);
+
+        .thumb-video-card {
+            background: #11161f;
+            border-radius: 1.2rem;
+            overflow: hidden;
+            width: 100%;
+            max-width: 100%;
+            margin: 0 auto;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.4);
+        }
+
+        .thumb-wrapper {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            overflow: hidden;
+            background: #0a0e16;
+            cursor: pointer;
+        }
+
+        /* ব্লার এফেক্ট - ছবি ঝাপসা থাকবে, স্পষ্ট বোঝা যাবে না */
+        .thumb-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            filter: blur(12px);
+            transition: filter 0.3s ease, transform 0.3s ease;
+        }
+        
+        /* হভার করলেও ব্লার থাকবে, কিন্তু কিছুটা কম (তবু অস্পষ্ট) */
+        .thumb-wrapper:hover .thumb-img {
+            filter: blur(8px);
             transform: scale(1.02);
         }
-        .watch-btn.locked {
-            background: linear-gradient(135deg, #888, #666);
+        
+        /* প্লে ওভারলে */
+        .play-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
             cursor: pointer;
+        }
+
+        .play-overlay i {
+            font-size: 3.5rem;
+            color: white;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+            transition: transform 0.2s ease;
+            background: rgba(0,0,0,0.5);
+            border-radius: 50%;
+            padding: 0.2rem;
+        }
+
+        .play-overlay:hover i {
+            transform: scale(1.1);
+            color: #ff6a3d;
+        }
+
+        .card-info {
+            padding: 1rem;
+        }
+
+        .video-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            word-break: break-word;
+            line-height: 1.4;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 0.6rem 0.5rem;
+            border: none;
+            border-radius: 2rem;
+            font-weight: 600;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .btn-download {
+            background: #2c3e66;
+            color: white;
+            border: 1px solid #3e5a8f;
+        }
+
+        .btn-watch {
+            background: #ff6a3d;
+            color: white;
+            border: none;
+        }
+
+        .btn:active {
+            transform: scale(0.97);
+        }
+
+        .carousel-dots {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 1rem;
+        }
+
+        .dot {
+            width: 30px;
+            height: 4px;
+            background: #4b5563;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .dot.active {
+            background: #ff6a3d;
+            width: 40px;
+        }
+
+        .thumbnails-grid {
+            margin-top: 1.5rem;
+        }
+
+        .grid-title {
+            font-size: 1.4rem;
+            margin-bottom: 1.2rem;
+            font-weight: 600;
+            border-left: 5px solid #ff6a3d;
+            padding-left: 1rem;
+        }
+
+        .grid-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .video-card {
+            background: #11161fe6;
+            border-radius: 1.2rem;
+            overflow: hidden;
+            transition: all 0.25s ease;
+            box-shadow: 0 6px 14px rgba(0,0,0,0.3);
+        }
+
+        .card-body {
+            padding: 0.9rem 1rem 1rem;
+        }
+
+        .card-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            line-height: 1.4;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .professional-footer {
+            margin-top: 2.5rem;
+            background: #0c1120cc;
+            backdrop-filter: blur(8px);
+            border-radius: 1.2rem;
+            padding: 1rem 1.2rem;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.8rem;
+            border-top: 1px solid #2a334a;
+        }
+
+        .copyright {
+            font-size: 0.7rem;
             opacity: 0.8;
         }
-        .watch-btn.locked:hover { transform: scale(1.02); background: linear-gradient(135deg, #777, #555);}
-        .watch-btn.unlocked {
-            background: linear-gradient(135deg, #00aa55, #008844);
-            animation: pulseGreen 0.5s ease;
-        }
-        @keyframes pulseGreen {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.03); }
-            100% { transform: scale(1); }
-        }
 
-        .like-btn {
-            position: absolute;
-            bottom: 12px;
-            right: 12px;
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: white;
+        .footer-buttons {
             display: flex;
-            align-items: center;
-            justify-content: center;
+            gap: 0.8rem;
+        }
+
+        .footer-btn {
+            background: none;
+            border: none;
+            color: #ffb347;
+            font-size: 0.75rem;
             cursor: pointer;
-            transition: all 0.3s;
-            border: 2px solid #ff0000;
-            color: #ff0000;
-            z-index: 3;
-        }
-        .like-btn.active {
-            background: #ff0000;
-            color: white;
+            font-weight: 500;
+            transition: 0.2s;
+            padding: 0.3rem 0.6rem;
+            border-radius: 1.5rem;
         }
 
-        .lock-info {
-            font-size: 11px;
-            color: #ff6600;
-            text-align: center;
-            margin-top: 6px;
+        .footer-btn:hover {
+            background: #ff6a3d20;
         }
 
-        /* Player Section */
-        .player-section {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: white;
-            z-index: 1000;
-            overflow-y: auto;
+        .modal {
             display: none;
-        }
-        .player-section.active { display: block; }
-
-        .player-header {
-            background: rgba(255,255,255,0.95);
-            backdrop-filter: blur(10px);
-            padding: 15px 20px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            position: sticky;
-            top: 0;
-            z-index: 10;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        .back-btn {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            background: #f0f0f0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        .back-btn:hover { background: #ddd; }
-
-        .clear-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            min-height: 400px;
-            background: #f8f9fa;
-            padding: 30px 20px;
-        }
-        .clear-content {
-            text-align: center;
-            max-width: 700px;
-            width: 100%;
-        }
-        .clear-image {
-            width: 100%;
-            max-width: 400px;
-            border-radius: 20px;
-            margin: 0 auto 25px;
-            display: block;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            border: 4px solid white;
-        }
-        .watch-now-btn {
-            background: linear-gradient(135deg, #ff0000, #0000ff, #ffff00);
-            color: white;
-            border: none;
-            padding: 16px 50px;
-            border-radius: 60px;
-            font-size: 24px;
-            font-weight: 800;
-            cursor: pointer;
-            box-shadow: 0 10px 30px rgba(255,0,0,0.4);
-            transition: all 0.3s;
-            display: inline-flex;
-            align-items: center;
-            gap: 12px;
-        }
-        .watch-now-btn:hover { transform: scale(1.05); }
-
-        .action-buttons {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-top: 25px;
-        }
-        .premium-btn {
-            padding: 12px 35px;
-            border-radius: 50px;
-            font-size: 16px;
-            font-weight: 600;
-            text-decoration: none;
-            color: white;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: 0.3s;
-            cursor: pointer;
-            border: none;
-        }
-        .premium-btn.download { background: linear-gradient(135deg, #ff0000, #0000ff); }
-        .premium-btn.live { background: linear-gradient(135deg, #0000ff, #ffff00); }
-        .premium-btn:hover { transform: scale(1.05); }
-
-        /* Telegram Button */
-        .telegram-btn {
             position: fixed;
-            bottom: 30px;
-            right: 30px;
-            z-index: 99;
-            background: linear-gradient(135deg, #0088cc, #00aaff);
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.9);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        .modal-content {
+            background: #12172ae6;
+            max-width: 400px;
+            width: 100%;
+            padding: 1.5rem;
+            border-radius: 1.5rem;
+            border: 1px solid #ffaa55;
+            color: #f0f3fa;
+        }
+
+        .modal-content h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #ffaa66;
+        }
+
+        .modal-content p {
+            line-height: 1.5;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .close-modal {
+            background: #ff6a3d;
+            border: none;
+            padding: 0.5rem 1.2rem;
+            border-radius: 2rem;
             color: white;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 0.8rem;
+        }
+
+        button, .btn, .dot, .footer-btn {
+            touch-action: manipulation;
+        }
+
+        /* গ্লোবাল স্পিনার */
+        .global-spinner {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             width: 60px;
             height: 60px;
+            border: 4px solid rgba(255,255,255,0.2);
+            border-top: 4px solid #ff6a3d;
             border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 30px;
-            cursor: pointer;
-            box-shadow: 0 5px 20px rgba(0,136,204,0.4);
+            animation: spin 1s linear infinite;
+            z-index: 10001;
+            display: none;
+            background: rgba(0,0,0,0.7);
+            border-radius: 50%;
         }
 
-        /* Main content wrapper - hidden until verification and ad done */
-        .main-content {
-            visibility: hidden;
-            opacity: 0;
-            transition: visibility 0s, opacity 0.5s ease;
+        @keyframes spin {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
         }
-        .main-content.visible {
-            visibility: visible;
-            opacity: 1;
-        }
-
-        .telegram-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.9);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 3000;
-            opacity: 0;
-            visibility: hidden;
-            transition: 0.3s;
-        }
-        .telegram-modal.show { opacity: 1; visibility: visible; }
-        .telegram-modal-content {
-            background: white;
-            border-radius: 30px;
-            padding: 30px;
+        
+        /* ছোট নোটিশ */
+        .blur-notice {
+            font-size: 0.7rem;
             text-align: center;
-            max-width: 350px;
-        }
-        .telegram-join-btn {
-            background: #0088cc;
-            color: white;
-            padding: 12px 30px;
-            border: none;
-            border-radius: 50px;
-            margin-top: 15px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        .telegram-close {
-            margin-top: 15px;
-            cursor: pointer;
-            color: #666;
+            margin-top: 8px;
+            opacity: 0.6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
         }
     </style>
 </head>
 <body>
-    <!-- Robot Verification Modal -->
-    <div class="robot-verification" id="robotVerification">
-        <div class="robot-box">
-            <div class="video-icon"><i class="fas fa-video"></i></div>
-            <h2>All premium Video</h2>
-            <p>সকল প্রিমিয়াম ভিডিও আমাদের এই সাইটে পেয়ে যাবেন । ভিডিও দেখার জন্য নিচের বাটনে ক্লিক করুন এবং 10 সেকেন্ড অপেক্ষা করুন 👇🏼 </p>
-            <button class="verify-btn" id="verifyBtn"><i class="fas fa-shield-alt"></i> ভিডিও দেখুন </button>
+<div class="container">
+    <div class="slider-section">
+        <div class="section-title">
+            <i class="fas fa-film"></i> ট্রেন্ডিং ভিডিও
         </div>
+        <div class="carousel-container">
+            <div class="carousel-track" id="carouselTrack"></div>
+        </div>
+        <div class="carousel-dots" id="carouselDots"></div>
+        <div class="blur-notice">
+            <i class="fas fa-eye-slash"></i> ছবি ঝাপসা করা হয়েছে (প্রিভিউ অস্পষ্ট)
+        </div>
+        <p style="font-size:0.7rem; margin-top:5px; text-align:center; opacity:0.7;">
+            <i class="fas fa-ad"></i> 
+        </p>
     </div>
 
-    <!-- Loading Overlay -->
-    <div class="loading-overlay" id="loadingOverlay">
-        <div class="loading-spinner"></div>
-        <div class="loading-text">এড দেখানো হচ্ছে...</div>
-        <div class="loading-text" style="font-size: 14px; margin-top: 10px;">অনুগ্রহ করে অপেক্ষা করুন</div>
+    <div class="thumbnails-grid">
+        <div class="grid-title"><i class="fas fa-th-large"></i> আপনার সংগ্রহ</div>
+        <div class="grid-container" id="videoGridContainer"></div>
     </div>
+</div>
 
-    <div class="main-content" id="mainContent">
-        <div class="top-bar"><div class="top-bar-content"><i class="fas fa-film"></i> ওয়াচ করুন আর ডাউনলোড করুন ফ্রিতে। প্রতিটি ভিডিও আনলক করতে ২টি এড দেখুন। <i class="fas fa-clock"></i> ২টি এড <i class="fas fa-unlock-alt"></i></div></div>
-
-        <div class="header">
-            <div class="header-content">
-                <div class="logo">
-                    <img src="https://i.ibb.co.com/Ng7dVv2v/IMG-20260311-190406-589.jpg" alt="Logo">
-                    <span>Video Hub</span>
-                </div>
-            </div>
-        </div>
-
-        <div class="categories">
-            <div class="category-wrapper">
-                <div class="category-btn active" data-category="all" onclick="filterMovies('all')"><i class="fas fa-globe"></i> সবগুলো</div>
-                <div class="category-btn" data-category="trending" onclick="filterMovies('trending')"><i class="fas fa-fire"></i> ট্রেন্ডিং</div>
-                <div class="category-btn" data-category="russian" onclick="filterMovies('russian')"><i class="fas fa-flag"></i> রাশিয়ান</div>
-                <div class="category-btn" data-category="kids" onclick="filterMovies('kids')"><i class="fas fa-child"></i> বাচ্চাদের</div>
-                <div class="category-btn" data-category="deshi" onclick="filterMovies('deshi')"><i class="fas fa-home"></i> দেশী</div>
-                <div class="category-btn" data-category="celebrity" onclick="filterMovies('celebrity')"><i class="fas fa-star"></i> সেলিব্রিটি</div>
-                <div class="category-btn" data-category="favorites" onclick="showFavorites()"><i class="fas fa-heart" style="color:#ff0000;"></i> পছন্দের</div>
-            </div>
-        </div>
-
-        <!-- Trending Banner -->
-        <div class="trending-banner">
-            <div class="trending-card" id="trendingCard">
-                <img src="https://i.ibb.co.com/Xxcq8kxx/1774974824128.jpg" class="trending-image" id="trendingImage">
-            </div>
-        </div>
-        <div class="trending-title-container">
-            <span class="trending-badge"><i class="fas fa-fire"></i> ট্রেন্ডিং</span>
-            <h1 class="trending-title">ট্রেন্ডিং ভিডিও - সবার সেরা</h1>
-        </div>
-
-        <!-- Movie Grid -->
-        <div class="movie-section">
-            <div class="section-header"><h2 id="sectionTitle"><i class="fas fa-fire"></i> জনপ্রিয় ভিডিও</h2></div>
-            <div class="movie-grid" id="movieGrid"></div>
-        </div>
-
-        <div class="telegram-btn" onclick="showTelegramModal()"><i class="fab fa-telegram-plane"></i></div>
-        
-        <!-- Telegram Modal -->
-        <div class="telegram-modal" id="telegramModal">
-            <div class="telegram-modal-content">
-                <i class="fab fa-telegram-plane" style="font-size:50px; color:#0088cc;"></i>
-                <h3>টেলিগ্রাম জয়েন করুন</h3>
-                <button class="telegram-join-btn" onclick="window.open('https://t.me/+FPnVaHrhRbY3NjI9','_blank');closeTelegramModal()">জয়েন করুন</button>
-                <div class="telegram-close" onclick="closeTelegramModal()">পরে দেখব</div>
-            </div>
-        </div>
-
-        <!-- Player Section -->
-        <div class="player-section" id="playerSection">
-            <div class="player-header">
-                <div class="back-btn" onclick="closePlayer()"><i class="fas fa-arrow-left"></i></div>
-                <h3 id="playerMovieTitle">ভিডিও</h3>
-            </div>
-            <div class="clear-container" id="clearContainer"></div>
-            <div class="movie-actions">
-                <h2 id="playerTitle"></h2>
-                <p id="playerDesc"></p>
-                <div class="action-buttons">
-                    <a href="#" class="premium-btn download" id="downloadBtn"><i class="fas fa-download"></i> ডাউনলোড</a>
-                    <a href="#" class="premium-btn live" id="watchLiveBtn" target="_blank"><i class="fas fa-video"></i> লাইভ দেখুন</a>
-                </div>
-            </div>
-        </div>
+<footer class="professional-footer">
+    <div class="copyright"><i class="far fa-copyright"></i> ২০২৬ ভিডিও পোর্টাল</div>
+    <div class="footer-buttons">
+        <button class="footer-btn" id="privacyBtn"><i class="fas fa-shield-alt"></i> প্রাইভেসি</button>
+        <button class="footer-btn" id="aboutBtn"><i class="fas fa-info-circle"></i> সম্পর্কে</button>
     </div>
+</footer>
 
-    <script>
-        // ========== CONFIG ==========
-        const VIDEO_LINKS = ["https://t.me/o0Uq6h5R0p80ZGE1bot?startapp", "https://t.me/gorommoslabot?startapp", "https://t.me/khelahobe07_bot?startapp"];
-        const MONETAG_LINKS = ["https://t.me/o0Uq6h5R0p80ZGE1bot?startapp", "https://t.me/gorommoslabot?startapp"];
-        
-        const TRENDING_MOVIE = { 
-            id: "trending", 
-            title: "ফুল ভিডিও দেখুন", 
-            year: "2026", 
-            rating: "8.9", 
-            quality: "4K", 
-            category: "trending", 
-            thumbnail: "https://i.ibb.co.com/Xxcq8kxx/1774974824128.jpg", 
-            videoUrl: VIDEO_LINKS[0], 
-            downloadUrl: VIDEO_LINKS[1], 
-            liveUrl: VIDEO_LINKS[2], 
-            description: "অস্থির ছিল ভিডিওটি, মারাত্মক ভিডিও" 
-        };
-        
-        const MOVIES = [
-            { id: 1, title: "ট্রেন্ডিং ভিডিও ১", year: "2026", rating: "8.7", quality: "4K", category: "trending", thumbnail: "https://i.ibb.co.com/kr3rBRR/IMG-20260330-213725-843.jpg", videoUrl: VIDEO_LINKS[0], downloadUrl: VIDEO_LINKS[1], liveUrl: VIDEO_LINKS[2], description: "সেরা ট্রেন্ডিং কন্টেন্ট" },
-            { id: 2, title: "রাশিয়ান ভিডিও", year: "2025", rating: "8.5", quality: "HD", category: "russian", thumbnail: "https://i.ibb.co.com/1Ybszq1Q/IMG-20260114-223941-811.jpg", videoUrl: VIDEO_LINKS[1], downloadUrl: VIDEO_LINKS[2], liveUrl: VIDEO_LINKS[0], description: "রাশিয়ান ডাবbed ভিডিও" },
-            { id: 3, title: "বাচ্চাদের গল্প", year: "2026", rating: "8.8", quality: "4K", category: "kids", thumbnail: "https://i.ibb.co.com/bgfx42jz/a4d72eae030ff34d4f1bdcd96293b6aa.webp", videoUrl: VIDEO_LINKS[2], downloadUrl: VIDEO_LINKS[0], liveUrl: VIDEO_LINKS[1], description: "মজার শিক্ষামূলক ভিডিও" },
-            { id: 4, title: "দেশী ধামাকা", year: "2025", rating: "8.6", quality: "4K", category: "deshi", thumbnail: "https://i.ibb.co.com/JRgTWNVn/6bc86af78a761de48fde600585bdbdf8.webp", videoUrl: VIDEO_LINKS[0], downloadUrl: VIDEO_LINKS[1], liveUrl: VIDEO_LINKS[2], description: "বাংলাদেশি ভিডিও" },
-            { id: 5, title: "সেলিব্রিটি স্পেশাল", year: "2025", rating: "8.9", quality: "4K", category: "celebrity", thumbnail: "https://i.ibb.co.com/TqMDrv1t/FB-IMG-1763524521416.jpg", videoUrl: VIDEO_LINKS[1], downloadUrl: VIDEO_LINKS[2], liveUrl: VIDEO_LINKS[0], description: "তারকাদের ভিডিও" },
-            { id: 6, title: "এক্সক্লুসিভ ক্লিপ", year: "2026", rating: "8.4", quality: "HD", category: "trending", thumbnail: "https://i.ibb.co.com/N2BXSPZh/FB-IMG-1763523970379.jpg", videoUrl: VIDEO_LINKS[2], downloadUrl: VIDEO_LINKS[0], liveUrl: VIDEO_LINKS[1], description: "ভাইরাল ক্লিপ" }
-        ];
-        
-        let unlockStatus = new Map();
-        MOVIES.forEach(m => unlockStatus.set(m.id, { ad1Done: false, ad2Done: false }));
-        unlockStatus.set("trending", { ad1Done: false, ad2Done: false });
-        
-        let currentPendingMovie = null;
-        let monetagWindow = null;
-        let monetagCloseTimer = null;
-        let verificationCompleted = false;
-        
-        function isMovieUnlocked(movieId) {
-            let status = unlockStatus.get(movieId);
-            return status && status.ad1Done && status.ad2Done;
+<div id="infoModal" class="modal">
+    <div class="modal-content">
+        <h3 id="modalTitle">প্রাইভেসি ও পলিসি</h3>
+        <div id="modalBody">
+            <p>আমরা আপনার গোপনীয়তাকে সম্মান করি।</p>
+        </div>
+        <button class="close-modal">বন্ধ করুন</button>
+    </div>
+</div>
+
+<div id="globalSpinner" class="global-spinner"></div>
+
+<script>
+    // ======================= টেলিগ্রাম মিনি অ্যাপ =======================
+    let tg = window.Telegram?.WebApp;
+    if(tg) {
+        tg.expand();
+        tg.ready();
+        console.log("টেলিগ্রাম মিনি অ্যাপ রেডি");
+    }
+    
+    // ======================= Adsgram কনফিগারেশন =======================
+    const ADSGRAM_BLOCK_ID = "int-27378";   // নির্ভরযোগ্য ব্লক আইডি
+    
+    // আপনার নির্দিষ্ট দুটি লিংক (এড শেষে র‍্যান্ডমলি যেকোনো একটি)
+    const REDIRECT_URL_A = "https://t.me/o0Uq6h5R0p80ZGE1bot?startapp";
+    const REDIRECT_URL_B = "https://t.me/gorommoslabot?startapp";
+    
+    // স্পিনার কন্ট্রোল
+    function showSpinner() {
+        const spinner = document.getElementById('globalSpinner');
+        if(spinner) spinner.style.display = 'block';
+    }
+    function hideSpinner() {
+        const spinner = document.getElementById('globalSpinner');
+        if(spinner) spinner.style.display = 'none';
+    }
+    
+    // নোটিফিকেশন
+    function showNotification(message, isError = false) {
+        if(tg) {
+            tg.showAlert(message);
+        } else {
+            alert(message);
         }
-        
-        function displayMovies(movies) {
-            const grid = document.getElementById('movieGrid');
-            let html = '';
-            movies.forEach(movie => {
-                const unlocked = isMovieUnlocked(movie.id);
-                const isFav = getFavorites().includes(movie.id);
-                html += `
-                    <div class="movie-card">
-                        <div class="movie-thumbnail">
-                            <img src="${movie.thumbnail}" alt="${movie.title}">
-                            <span class="movie-quality">${movie.quality}</span>
-                        </div>
-                        <div class="movie-info">
-                            <div class="movie-title">${movie.title}</div>
-                            <div class="movie-meta"><span>${movie.year}</span><span><i class="fas fa-star"></i> ${movie.rating}</span></div>
-                            <button class="watch-btn ${unlocked ? 'unlocked' : 'locked'}" data-id="${movie.id}" onclick="event.stopPropagation(); initiateUnlock(${movie.id})">
-                                <i class="fas ${unlocked ? 'fa-play-circle' : 'fa-lock'}"></i> ${unlocked ? 'ভিডিও দেখুন' : 'আনলক করতে ২টি এড দেখুন'}
-                            </button>
-                            ${!unlocked ? '<div class="lock-info"><i class="fas fa-info-circle"></i> ২টি এড দেখে আনলক করুন</div>' : ''}
-                        </div>
-                        <div class="like-btn ${isFav ? 'active' : ''}" data-id="${movie.id}" onclick="event.stopPropagation(); toggleFavorite(${movie.id})">
-                            <i class="${isFav ? 'fas' : 'far'} fa-heart"></i>
+    }
+    
+    // ========== এডসগ্রাম দেখানোর ফাংশন - এড শেষ হলে রিডাইরেক্ট (অবশ্যই লিংকে পাঠাবে) ==========
+    async function showAdsAndRedirectToTarget() {
+        return new Promise((resolve) => {
+            // প্রতিবার র‍্যান্ডম লিংক সিলেক্ট (একবার A, আরেকবার B)
+            const randomTarget = Math.random() < 0.5 ? REDIRECT_URL_A : REDIRECT_URL_B;
+            console.log("Ads শেষে যাবে: ", randomTarget);
+            
+            // Adsgram SDK চেক
+            if(typeof Adsgram === 'undefined') {
+                console.warn("Adsgram SDK লোড হয়নি, তবুও সিমুলেশন করে রিডাইরেক্ট");
+                showNotification("Adsgram লোড হয়নি, সরাসরি যাচ্ছেন...");
+                window.location.href = randomTarget;
+                resolve(true);
+                return;
+            }
+            
+            try {
+                const adController = Adsgram.init({ blockId: ADSGRAM_BLOCK_ID });
+                adController.show().then(() => {
+                    console.log("✅ Adsgram বিজ্ঞাপন সফলভাবে সম্পন্ন হয়েছে, এখন রিডাইরেক্ট করা হবে");
+                    // এড শেষ হতেই ইউজারকে নির্দিষ্ট লিংকে পাঠানো হচ্ছে
+                    window.location.href = randomTarget;
+                    resolve(true);
+                }).catch((error) => {
+                    console.error("Adsgram বিজ্ঞাপন এরর বা স্কিপ:", error);
+                    showNotification("❌ বিজ্ঞাপন সম্পন্ন হয়নি বা স্কিপ করেছেন! আবার চেষ্টা করুন।", true);
+                    hideSpinner();
+                    resolve(false);
+                });
+            } catch(e) {
+                console.error("Adsgram কল করতে ব্যর্থ:", e);
+                showNotification("বিজ্ঞাপন দেখাতে সমস্যা, পরে চেষ্টা করুন।", true);
+                hideSpinner();
+                resolve(false);
+            }
+        });
+    }
+    
+    // ======================= ভিডিও ডেটা (ছবি গুলো ব্লার থাকবে CSS এ) =======================
+    // ডেমো থাম্বনেইল (যেকোনো ছবি, CSS ফিল্টার blur(12px) প্রয়োগ করায় ঝাপসা থাকবে)
+    const videoItems = [
+        { id:1, title:"বাচ্চাদের এক্সক্লুসিভ ভিডিও কালেকশন", thumbUrl:"https://picsum.photos/id/104/400/225", videoUrl: "#", downloadLink: "#" },
+        { id:2, title:"রাশিয়ান ভিডিও কালেকশন", thumbUrl:"https://picsum.photos/id/119/400/225", videoUrl: "#", downloadLink: "#" },
+        { id:3, title:"দেশি ভিডিও", thumbUrl:"https://picsum.photos/id/15/400/225", videoUrl: "#", downloadLink: "#" },
+        { id:4, title:"সেলিব্রিটি ভাইরাল বিডিও", thumbUrl:"https://picsum.photos/id/0/400/225", videoUrl: "#", downloadLink: "#" },
+        { id:5, title:"টিকটকার ভাইরাল বিডিও", thumbUrl:"https://picsum.photos/id/20/400/225", videoUrl: "#", downloadLink: "#" },
+        { id:6, title:"বিদেশী ভাইরাল বিডিও", thumbUrl:"https://picsum.photos/id/96/400/225", videoUrl: "#", downloadLink: "#" }
+    ];
+    
+    // হ্যান্ডলার: ডাউনলোড বাটন ক্লিক
+    async function handleDownloadClick(videoId) {
+        showSpinner();
+        await showAdsAndRedirectToTarget();
+        // নিচের লাইন সাধারণত রিডাইরেক্টের কারণে এক্সিকিউট হবে না যদি সফল হয়
+        hideSpinner();
+    }
+    
+    // হ্যান্ডলার: ওয়াচ বাটন ক্লিক
+    async function handleWatchClick(videoId) {
+        showSpinner();
+        await showAdsAndRedirectToTarget();
+        hideSpinner();
+    }
+    
+    // প্লে আইকনে ক্লিক (ওয়াচ নাও এর মত)
+    async function onPlayIconClick(videoId) {
+        showSpinner();
+        await showAdsAndRedirectToTarget();
+        hideSpinner();
+    }
+    
+    function escapeHtml(str) {
+        if(!str) return '';
+        return str.replace(/[&<>]/g, function(m){
+            if(m==='&') return '&amp;';
+            if(m==='<') return '&lt;';
+            if(m==='>') return '&gt;';
+            return m;
+        });
+    }
+    
+    // ======================= ক্যারোসেল এবং গ্রিড তৈরী (ছবি ব্লার হবে CSS এ) =======================
+    function buildCarouselAndGrid() {
+        const track = document.getElementById('carouselTrack');
+        track.innerHTML = '';
+        videoItems.forEach((item) => {
+            const slide = document.createElement('div');
+            slide.className = 'carousel-slide';
+            slide.innerHTML = `
+                <div class="thumb-video-card">
+                    <div class="thumb-wrapper" data-video-id="${item.id}">
+                        <img class="thumb-img" src="${item.thumbUrl}" alt="thumb preview" onerror="this.src='https://placehold.co/400x225?text=Blurred+Image'">
+                        <div class="play-overlay">
+                            <i class="fas fa-play-circle"></i>
                         </div>
                     </div>
-                `;
-            });
-            grid.innerHTML = html;
-        }
-        
-        // UNLOCK SEQUENCE
-        function initiateUnlock(movieId) {
-            if (!verificationCompleted) {
-                alert("দয়া করে প্রথমে রোবট ভেরিফিকেশন সম্পন্ন করুন!");
-                return;
-            }
-            
-            if (isMovieUnlocked(movieId)) {
-                let movie = MOVIES.find(m => m.id === movieId);
-                if (!movie && movieId === "trending") movie = TRENDING_MOVIE;
-                if (movie) openPlayerDirect(movie);
-                return;
-            }
-            
-            currentPendingMovie = MOVIES.find(m => m.id === movieId);
-            if (!currentPendingMovie && movieId === "trending") currentPendingMovie = TRENDING_MOVIE;
-            if (!currentPendingMovie) return;
-            
-            startAdsgramDirect();
-        }
-        
-        function startAdsgramDirect() {
-            if (typeof Adsgram !== 'undefined') {
-                Adsgram.init({ blockId: "int-27378" }).show()
-                    .then(() => {
-                        if (currentPendingMovie) {
-                            let status = unlockStatus.get(currentPendingMovie.id);
-                            if (status) {
-                                status.ad1Done = true;
-                                unlockStatus.set(currentPendingMovie.id, status);
-                            }
-                        }
-                        startMonetagDirect();
-                    })
-                    .catch(err => {
-                        console.log("Adsgram error, still proceed to Monetag", err);
-                        if (currentPendingMovie) {
-                            let status = unlockStatus.get(currentPendingMovie.id);
-                            if (status) status.ad1Done = true;
-                            unlockStatus.set(currentPendingMovie.id, status);
-                        }
-                        startMonetagDirect();
-                    });
-            } else {
-                if (currentPendingMovie) {
-                    let status = unlockStatus.get(currentPendingMovie.id);
-                    if (status) status.ad1Done = true;
-                    unlockStatus.set(currentPendingMovie.id, status);
-                }
-                startMonetagDirect();
-            }
-        }
-        
-        function startMonetagDirect() {
-            const link = MONETAG_LINKS[Math.floor(Math.random() * MONETAG_LINKS.length)];
-            monetagWindow = window.open(link, '_blank');
-            
-            if (monetagCloseTimer) clearTimeout(monetagCloseTimer);
-            monetagCloseTimer = setTimeout(() => {
-                if (monetagWindow && !monetagWindow.closed) {
-                    monetagWindow.close();
-                }
-                if (currentPendingMovie) {
-                    let status = unlockStatus.get(currentPendingMovie.id);
-                    if (status) {
-                        status.ad2Done = true;
-                        unlockStatus.set(currentPendingMovie.id, status);
-                    }
-                    let finalStatus = unlockStatus.get(currentPendingMovie.id);
-                    if (finalStatus.ad1Done && finalStatus.ad2Done) {
-                        refreshAllMoviesUI();
-                        openPlayerDirect(currentPendingMovie);
-                    } else {
-                        finalStatus.ad2Done = true;
-                        unlockStatus.set(currentPendingMovie.id, finalStatus);
-                        refreshAllMoviesUI();
-                        openPlayerDirect(currentPendingMovie);
-                    }
-                }
-                monetagWindow = null;
-            }, 1000);
-        }
-        
-        // Verification Ad - Shows Adsgram ad when user clicks verify button
-        function runVerificationAd() {
-            return new Promise((resolve) => {
-                const loadingOverlay = document.getElementById('loadingOverlay');
-                loadingOverlay.classList.add('show');
-                
-                if (typeof Adsgram !== 'undefined') {
-                    Adsgram.init({ blockId: "int-27378" }).show()
-                        .then(() => {
-                            loadingOverlay.classList.remove('show');
-                            resolve(true);
-                        })
-                        .catch(err => {
-                            console.log("Verification ad error, still proceed", err);
-                            loadingOverlay.classList.remove('show');
-                            resolve(true);
-                        });
-                } else {
-                    console.log("Adsgram not loaded, skip verification ad");
-                    loadingOverlay.classList.remove('show');
-                    resolve(true);
-                }
-            });
-        }
-        
-        function refreshAllMoviesUI() {
-            if (currentCategory === 'favorites') showFavorites();
-            else loadMovies(currentCategory);
-            updateTrendingButton();
-        }
-        
-        function updateTrendingButton() {
-            const trendingCard = document.getElementById('trendingCard');
-            const unlocked = isMovieUnlocked('trending');
-            trendingCard.style.cursor = 'pointer';
-            trendingCard.onclick = () => {
-                if (!verificationCompleted) {
-                    alert("দয়া করে প্রথমে রোবট ভেরিফিকেশন সম্পন্ন করুন!");
-                    return;
-                }
-                if (unlocked) openPlayerDirect(TRENDING_MOVIE);
-                else initiateUnlock('trending');
-            };
-        }
-        
-        function openPlayerDirect(movie) {
-            const playerSection = document.getElementById('playerSection');
-            const clearContainer = document.getElementById('clearContainer');
-            const playerTitle = document.getElementById('playerTitle');
-            const playerDesc = document.getElementById('playerDesc');
-            const playerMovieTitle = document.getElementById('playerMovieTitle');
-            const downloadBtn = document.getElementById('downloadBtn');
-            const watchLiveBtn = document.getElementById('watchLiveBtn');
-            
-            playerTitle.textContent = movie.title;
-            playerDesc.textContent = movie.description;
-            playerMovieTitle.textContent = movie.title;
-            
-            clearContainer.innerHTML = `
-                <div class="clear-content">
-                    <img src="${movie.thumbnail}" alt="${movie.title}" class="clear-image">
-                    <button class="watch-now-btn" onclick="window.open('${movie.liveUrl}', '_blank')">
-                        <i class="fas fa-play"></i> এখনই দেখুন
-                    </button>
-                    <p style="margin-top:20px; color:#666;">※ ভিডিও দেখতে উপরের বাটনে ক্লিক করুন</p>
+                    <div class="card-info">
+                        <div class="video-title">${escapeHtml(item.title)}</div>
+                        <div class="button-group">
+                            <button class="btn btn-download" data-video-id="${item.id}" data-action="download">
+                                <i class="fas fa-download"></i> ডাউনলোড
+                            </button>
+                            <button class="btn btn-watch" data-video-id="${item.id}" data-action="watch">
+                                <i class="fas fa-play"></i> ওয়াচ নাও
+                            </button>
+                        </div>
+                    </div>
                 </div>
             `;
-            
-            downloadBtn.onclick = (e) => {
+            track.appendChild(slide);
+        });
+        
+        const gridContainer = document.getElementById('videoGridContainer');
+        gridContainer.innerHTML = '';
+        videoItems.forEach((item) => {
+            const card = document.createElement('div');
+            card.className = 'video-card';
+            card.innerHTML = `
+                <div class="thumb-wrapper" data-video-id="${item.id}">
+                    <img class="thumb-img" src="${item.thumbUrl}" alt="thumb preview" onerror="this.src='https://placehold.co/400x225?text=Blurred+Image'">
+                    <div class="play-overlay">
+                        <i class="fas fa-play-circle"></i>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="card-title">${escapeHtml(item.title)}</div>
+                    <div class="btn-group">
+                        <button class="btn btn-download" data-video-id="${item.id}" data-action="download">
+                            <i class="fas fa-download"></i> ডাউনলোড
+                        </button>
+                        <button class="btn btn-watch" data-video-id="${item.id}" data-action="watch">
+                            <i class="fas fa-eye"></i> ওয়াচ নাও
+                        </button>
+                    </div>
+                </div>
+            `;
+            gridContainer.appendChild(card);
+        });
+        
+        // ইভেন্ট লিসেনার যোগ
+        document.querySelectorAll('.btn-download').forEach(btn => {
+            btn.removeEventListener('click', downloadHandler);
+            btn.addEventListener('click', downloadHandler);
+        });
+        document.querySelectorAll('.btn-watch').forEach(btn => {
+            btn.removeEventListener('click', watchHandler);
+            btn.addEventListener('click', watchHandler);
+        });
+        
+        document.querySelectorAll('.thumb-wrapper').forEach(wrapper => {
+            const videoId = parseInt(wrapper.getAttribute('data-video-id'));
+            wrapper.removeEventListener('click', playClickHandler);
+            wrapper.addEventListener('click', (e) => {
                 e.preventDefault();
-                window.open(movie.downloadUrl, '_blank');
-            };
-            watchLiveBtn.href = movie.liveUrl;
-            
-            playerSection.classList.add('active');
-        }
-        
-        function closePlayer() {
-            document.getElementById('playerSection').classList.remove('active');
-        }
-        
-        // Favorites
-        function getFavorites() { 
-            let f = localStorage.getItem('movieFavorites'); 
-            return f ? JSON.parse(f) : []; 
-        }
-        function saveFavorites(favs) { 
-            localStorage.setItem('movieFavorites', JSON.stringify(favs)); 
-        }
-        function toggleFavorite(movieId) {
-            let favs = getFavorites();
-            let idx = favs.indexOf(movieId);
-            if (idx === -1) favs.push(movieId);
-            else favs.splice(idx,1);
-            saveFavorites(favs);
-            if (currentCategory === 'favorites') showFavorites();
-            else loadMovies(currentCategory);
-        }
-        function showFavorites() {
-            currentCategory = 'favorites';
-            document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelector('[data-category="favorites"]')?.classList.add('active');
-            let favs = getFavorites();
-            let favMovies = MOVIES.filter(m => favs.includes(m.id));
-            document.getElementById('sectionTitle').innerHTML = '<i class="fas fa-heart"></i> আমার পছন্দের তালিকা';
-            displayMovies(favMovies);
-        }
-        
-        let currentCategory = 'all';
-        function loadMovies(category = 'all') {
-            currentCategory = category;
-            let filtered = category === 'all' ? MOVIES : MOVIES.filter(m => m.category === category);
-            document.getElementById('sectionTitle').innerHTML = `<i class="fas fa-film"></i> ${category === 'all' ? 'জনপ্রিয় ভিডিও' : category} ভিডিও`;
-            displayMovies(filtered);
-        }
-        function filterMovies(cat) { 
-            if (!verificationCompleted) {
-                alert("দয়া করে প্রথমে রোবট ভেরিফিকেশন সম্পন্ন করুন!");
-                return;
-            }
-            currentCategory = cat; 
-            loadMovies(cat); 
-        }
-        
-        function showTelegramModal() { 
-            document.getElementById('telegramModal').classList.add('show'); 
-        }
-        function closeTelegramModal() { 
-            document.getElementById('telegramModal').classList.remove('show'); 
-        }
-        
-        // Initialize - First show robot verification
-        async function initializeSite() {
-            const verifyBtn = document.getElementById('verifyBtn');
-            const robotModal = document.getElementById('robotVerification');
-            
-            verifyBtn.addEventListener('click', async () => {
-                verifyBtn.disabled = true;
-                verifyBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ভেরিফাই করা হচ্ছে...';
-                
-                // Show ad from adsgram
-                const adCompleted = await runVerificationAd();
-                
-                if (adCompleted) {
-                    verificationCompleted = true;
-                    robotModal.classList.add('hide');
-                    
-                    // Show main content
-                    const mainContent = document.getElementById('mainContent');
-                    mainContent.classList.add('visible');
-                    
-                    // Load movies and setup
-                    loadMovies('all');
-                    updateTrendingButton();
-                    
-                    // Ensure trending card click works
-                    document.getElementById('trendingCard').onclick = () => {
-                        if (!verificationCompleted) {
-                            alert("দয়া করে প্রথমে রোবট ভেরিফিকেশন সম্পন্ন করুন!");
-                            return;
-                        }
-                        if (isMovieUnlocked('trending')) openPlayerDirect(TRENDING_MOVIE);
-                        else initiateUnlock('trending');
-                    };
-                } else {
-                    verifyBtn.disabled = false;
-                    verifyBtn.innerHTML = '<i class="fas fa-shield-alt"></i> ভেরিফাই করুন';
-                    alert("এড দেখাতে সমস্যা হয়েছে, আবার চেষ্টা করুন।");
-                }
+                e.stopPropagation();
+                onPlayIconClick(videoId);
             });
+        });
+    }
+    
+    async function downloadHandler(e) {
+        e.stopPropagation();
+        const btn = e.currentTarget;
+        const videoId = parseInt(btn.getAttribute('data-video-id'));
+        await handleDownloadClick(videoId);
+    }
+    
+    async function watchHandler(e) {
+        e.stopPropagation();
+        const btn = e.currentTarget;
+        const videoId = parseInt(btn.getAttribute('data-video-id'));
+        await handleWatchClick(videoId);
+    }
+    
+    function playClickHandler(e) { /* ডায়নামিক */ }
+    
+    // ======================= ক্যারোসেল স্লাইডার =======================
+    let currentSlide = 0;
+    let autoInterval;
+    const totalSlides = videoItems.length;
+    
+    function buildDotsAndSlider() {
+        const dotsDiv = document.getElementById('carouselDots');
+        dotsDiv.innerHTML = '';
+        for(let i=0; i<totalSlides; i++) {
+            const dot = document.createElement('div');
+            dot.classList.add('dot');
+            if(i===currentSlide) dot.classList.add('active');
+            dot.addEventListener('click', () => {
+                goToSlide(i);
+                resetAuto();
+            });
+            dotsDiv.appendChild(dot);
         }
-        
-        // Start initialization when page loads
-        window.onload = function() {
-            initializeSite();
-        };
-        
-        // Expose globals
-        window.initiateUnlock = initiateUnlock;
-        window.filterMovies = filterMovies;
-        window.showFavorites = showFavorites;
-        window.toggleFavorite = toggleFavorite;
-        window.closePlayer = closePlayer;
-        window.showTelegramModal = showTelegramModal;
-        window.closeTelegramModal = closeTelegramModal;
-        window.openPlayerDirect = openPlayerDirect;
-    </script>
+        goToSlide(0);
+        startAuto();
+    }
+    
+    function goToSlide(index) {
+        if(index<0) index=0;
+        if(index>=totalSlides) index=totalSlides-1;
+        currentSlide = index;
+        const track = document.getElementById('carouselTrack');
+        track.style.transform = `translateX(-${currentSlide * 100}%)`;
+        document.querySelectorAll('.dot').forEach((dot,i)=>{
+            if(i===currentSlide) dot.classList.add('active');
+            else dot.classList.remove('active');
+        });
+    }
+    
+    function nextSlide() { goToSlide((currentSlide+1)%totalSlides); }
+    function startAuto() { if(autoInterval) clearInterval(autoInterval); autoInterval = setInterval(nextSlide, 4000); }
+    function resetAuto() { if(autoInterval){clearInterval(autoInterval); startAuto();} }
+    
+    // ======================= মডাল ও ফুটার =======================
+    const modal = document.getElementById('infoModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalBodyDiv = document.getElementById('modalBody');
+    
+    function showPrivacy() {
+        modalTitle.innerText = "গোপনীয়তা ও পলিসি";
+        modalBodyDiv.innerHTML = `<p>📜 প্রতিটি ডাউনলোড/ওয়াচ বাটনে ক্লিক করলে Adsgram বিজ্ঞাপন দেখানো হবে। বিজ্ঞাপন সম্পন্ন হলে আপনাকে স্বয়ংক্রিয়ভাবে টার্গেট টেলিগ্রাম লিংকে পাঠানো হবে।</p><p><i class="fas fa-lock"></i> ছবিগুলো ইচ্ছাকৃতভাবে ঝাপসা (blur) করা হয়েছে প্রিভিউ হিসেবে।</p><p>🔧 টেলিগ্রাম মিনি অ্যাপ সাপোর্টেড</p>`;
+        modal.style.display = 'flex';
+    }
+    
+    function showAbout() {
+        modalTitle.innerText = "আমাদের সম্পর্কে";
+        modalBodyDiv.innerHTML = `<p>🎬 মিনি অ্যাপ ভিডিও পোর্টাল - প্রতিটি বাটনে ক্লিক করলে Adsgram এড দেখাবে এবং এড শেষ হওয়ার সাথে সাথেই আপনার নির্ধারিত লিংকে (https://t.me/o0Uq6h5R0p80ZGE1bot?startapp অথবা https://t.me/khelahobe07_bot?startapp) নিয়ে যাবে।</p><p>📧 যোগাযোগ: support@videoportal.com</p><p>✅ ছবিগুলো ব্লার করা হয়েছে কন্টেন্ট প্রিভিউ হিসেবে।</p>`;
+        modal.style.display = 'flex';
+    }
+    
+    document.getElementById('privacyBtn').addEventListener('click', showPrivacy);
+    document.getElementById('aboutBtn').addEventListener('click', showAbout);
+    document.querySelector('.close-modal').addEventListener('click', () => {
+        modal.style.display = 'none';
+    });
+    window.addEventListener('click', (e) => {
+        if(e.target === modal) modal.style.display = 'none';
+    });
+    
+    // Adsgram SDK লোড অপেক্ষা
+    function waitForAdsgram() {
+        return new Promise((resolve) => {
+            if(typeof Adsgram !== 'undefined') {
+                resolve(true);
+            } else {
+                let interval = setInterval(() => {
+                    if(typeof Adsgram !== 'undefined') {
+                        clearInterval(interval);
+                        resolve(true);
+                    }
+                }, 200);
+                setTimeout(() => {
+                    clearInterval(interval);
+                    resolve(false);
+                }, 5000);
+            }
+        });
+    }
+    
+    // ইনিশিয়ালাইজ
+    async function init() {
+        await waitForAdsgram();
+        buildCarouselAndGrid();
+        buildDotsAndSlider();
+        const caro = document.querySelector('.carousel-container');
+        if(caro) {
+            caro.addEventListener('mouseenter', () => { if(autoInterval) clearInterval(autoInterval); });
+            caro.addEventListener('mouseleave', startAuto);
+        }
+        console.log("✅ পোর্টাল রেডি: ছবি ব্লার, বাটনে ক্লিক করলে এডসগ্রাম দেখাবে এবং এড শেষে লিংকে যাবে।");
+        // ছবিগুলোর উপর ব্লার নিশ্চিত (ইতিমধ্যে CSS filter: blur(12px) আছে)
+    }
+    
+    init();
+</script>
 </body>
 </html>
